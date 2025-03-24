@@ -1,0 +1,7 @@
+{
+    "extends":"@vritt-os/tsconfig/tsconfig.json",
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "dist"
+    }
+}
