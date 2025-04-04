@@ -1,25 +1,45 @@
 // File: components/ShellTerminal.tsx
 import useIsMounted from '@/hooks/useIsMounted';
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { Terminal } from '@xterm/xterm';
+import {FitAddon} from '@xterm/addon-fit';
 import "@xterm/xterm/css/xterm.css";
 import { io, Socket } from 'socket.io-client';
-import WindowContainer from './window-container';
+import { useWindowContext } from '@/context/windows-context';
 
 const ShellTerminal: React.FC = () => {
   const isMounted = useIsMounted();
   const terminalRef = useRef<HTMLDivElement>(null);
   const connectionRef = useRef<Socket | null>(null);
   const xTerminalRef = useRef<any>(null);
+  const fitAddOnRef = useRef<FitAddon>(null);
+
+  const {windows} = useWindowContext();
+
+  const isMaximized = useMemo(()=>{
+
+    return windows.find(w=>w.id ==="shell")?.isMaximized;
+
+  },[windows]);
+
 
   useEffect(() => {
     if (!isMounted || !terminalRef.current) return;
 
     const terminal = new Terminal({
-      rows: 20
+      rows: 20,
+      
     });
+
+    const fitAddOn = new FitAddon();
+    fitAddOnRef.current = fitAddOn;
+
+    
+    terminal.loadAddon(fitAddOn);
     xTerminalRef.current = terminal;
     terminal.open(terminalRef.current);
+    fitAddOn.fit();
+
     
     connectionRef.current = io("http://localhost:9000");
     connectionRef.current.connect();
@@ -27,6 +47,13 @@ const ShellTerminal: React.FC = () => {
     console.log("socket connected");
     
     terminal.onData((data) => {
+      if (data === '\x04') {
+        // Prevent default behavior
+        //terminalRef.current.write('\r\nCtrl+D is disabled.\r\n');
+        return;
+      }
+    
+      console.log("user typed: ",data)
       connectionRef.current!.emit("terminal:write", data);      
     });
     
@@ -43,6 +70,13 @@ const ShellTerminal: React.FC = () => {
     };
   }, [isMounted]);
 
+  useEffect(()=>{
+
+      if(fitAddOnRef.current) fitAddOnRef.current.fit();
+      
+
+  },[isMaximized]);
+
   const handleClose = () => {
     // Cleanup and handle close logic
     if (connectionRef.current) {
@@ -52,16 +86,13 @@ const ShellTerminal: React.FC = () => {
   };
 
   return (
-    <WindowContainer 
-      title="Windows PowerShell" 
-      onClose={handleClose}
-      initialPosition={{ x: 50, y: 50 }}
-    >
+    <div className='w-full h-full'>
       <div 
         ref={terminalRef}
-        className="flex-1 terminal-window pb-2 pt-4 overflow-y-auto"
+        className="h-full w-full *:terminal-window "
       />
-    </WindowContainer>
+    </div>
+    
   );
 };
 

@@ -1,10 +1,13 @@
+"use client"
 import WindowsWelcomeScreen from "@/components/welcome-screen";
-import Image from "next/image";
+import { WindowContextProvider } from "@/context/windows-context";
 
 export default function Home() {
   return (
     <div className="">
-    <WindowsWelcomeScreen />
+    <WindowContextProvider>
+      <WindowsWelcomeScreen />
+    </WindowContextProvider>
     </div>
   );
 }

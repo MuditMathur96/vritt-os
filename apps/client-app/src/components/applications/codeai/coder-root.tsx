@@ -118,6 +118,7 @@ function Editor({tabs,setTabs}:{tabs:any[],setTabs:(data:any)=>void}){
             {
                 tabs.map((tab)=>{
                     return <div 
+                    key={tab.name}
                     className={`bg-gray-800 h-full w-40 
                          border-transparent border
                     ${activeTab?.path === tab.name ?"bg-gray-900 ":" border-r-gray-950"}
@@ -172,11 +173,9 @@ const CoderRoot = (props: Props) => {
 
 
   return (
-    <WindowContainer
-    title='Code Editor'
-    >
-        <div className='w-full h-full flex items-start justify-start '>
-            <div className='w-[20%] border-r border-gray-800 h-full'>
+  
+        <div className='w-full h-full flex items-start justify-start bg-gray-800 '>
+            <div className='w-[20%] border-r border-gray-800 h-full text-gray-200'>
             <FileExplorer 
              fileStructure={files}
              onClick={(name,path)=>{
@@ -196,7 +195,7 @@ const CoderRoot = (props: Props) => {
                
             </div>
         </div>
-    </WindowContainer>
+    
   )
 }
 
