@@ -2,7 +2,7 @@
 
 A web-based operating system with a modern interface and powerful developer tools.
 
-![Vritt-OS](https://via.placeholder.com/800x400?text=Vritt-OS+Screenshot)
+Check this here: https://vritt-client-837515568960.asia-south1.run.app
 
 ## Overview
 
