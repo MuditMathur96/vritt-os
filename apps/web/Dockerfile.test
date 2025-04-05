@@ -1,0 +1,65 @@
+# Stage 1: Build
+FROM node:20 AS builder
+
+# Install required build dependencies for node-pty
+# Install required build dependencies for node-pty
+# Install required build dependencies for node-pty
+RUN apt-get update && apt-get install -y \
+    make \
+    python3 \
+    build-essential
+
+# Set working directory
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy pnpm-related files first to optimize Docker cache
+COPY pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml ./
+
+# Copy project folders relevant to workspace
+COPY apps/web ./apps/web
+COPY packages ./packages
+
+# Install only web-related dependencies (includes node-pty)
+RUN pnpm install --frozen-lockfile --filter ./apps/web...
+
+# Build the web app (assumes a build script exists)
+RUN pnpm --filter ./apps/web... run build
+
+# Stage 2: Runtime
+FROM node:20-slim
+
+# Install required build dependencies for node-pty
+# Install required build dependencies for node-pty
+RUN apt-get update && apt-get install -y \
+    make \
+    python3 \
+    build-essential
+
+# Create app user for security
+RUN npm i -g pnpm
+RUN useradd -m appuser
+USER appuser
+
+WORKDIR /app
+
+# Copy the built output and minimal files
+COPY --from=builder /app/apps/web/dist ./dist
+COPY --from=builder /app/apps/web/package.json ./
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/pnpm-lock.yaml ./
+
+
+# Install only production dependencies
+RUN pnpm install --prod
+RUN  pnpm install --prod --filter=@vritt-os/server
+
+# Expose your app port (customize if needed)
+EXPOSE 8080
+ENV PORT=8080
+# Start your app
+CMD ["node", "dist/index.js"]

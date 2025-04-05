@@ -14,9 +14,6 @@ class FileSystem{
     updateFolderName(path:string,name:string){}
 
 
-
-
-
 }
 
 export default FileSystem;

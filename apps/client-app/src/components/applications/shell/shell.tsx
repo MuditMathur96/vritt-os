@@ -1,19 +1,28 @@
+"use client"
 // File: components/ShellTerminal.tsx
 import useIsMounted from '@/hooks/useIsMounted';
 import React, { useRef, useEffect, useMemo } from 'react';
 import { Terminal } from '@xterm/xterm';
 import {FitAddon} from '@xterm/addon-fit';
+
 import "@xterm/xterm/css/xterm.css";
-import { io, Socket } from 'socket.io-client';
 import { useWindowContext } from '@/context/windows-context';
+import { useSocket } from '@/context/socket-context';
+import Configs from '@/configs/configs';
+
+
 
 const ShellTerminal: React.FC = () => {
+
+
   const isMounted = useIsMounted();
   const terminalRef = useRef<HTMLDivElement>(null);
-  const connectionRef = useRef<Socket | null>(null);
   const xTerminalRef = useRef<any>(null);
   const fitAddOnRef = useRef<FitAddon>(null);
 
+  const {addEvent,removeEvent,isConnected,emit} = useSocket();
+
+  
   const {windows} = useWindowContext();
 
   const isMaximized = useMemo(()=>{
@@ -24,7 +33,12 @@ const ShellTerminal: React.FC = () => {
 
 
   useEffect(() => {
-    if (!isMounted || !terminalRef.current) return;
+    console.log(isConnected);
+    if(!isMounted) return;
+    if (!terminalRef.current) return;
+    if(!isConnected) return;
+
+    
 
     const terminal = new Terminal({
       rows: 20,
@@ -39,36 +53,47 @@ const ShellTerminal: React.FC = () => {
     xTerminalRef.current = terminal;
     terminal.open(terminalRef.current);
     fitAddOn.fit();
-
-    
-    connectionRef.current = io("http://localhost:9000");
-    connectionRef.current.connect();
-    
-    console.log("socket connected");
     
     terminal.onData((data) => {
       if (data === '\x04') {
         // Prevent default behavior
-        //terminalRef.current.write('\r\nCtrl+D is disabled.\r\n');
+        //terminalRef.current!.write('\r\nCtrl+D is disabled.\r\n');
         return;
       }
     
-      console.log("user typed: ",data)
-      connectionRef.current!.emit("terminal:write", data);      
+    //  console.log("user typed: ",data)
+
+      // emit default event to make start terminal
+      emit(Configs.terminalEvents.terminalWrite,data);
+
+      //TODO:Remove this later
+      // connectionRef.current!.emit("terminal:write", data);      
     });
     
-    connectionRef.current.on("terminal:update", (text: string) => {
-      console.log("on terminal update: ", text);
+    addEvent(Configs.terminalEvents.terminalUpdate,(text: string) => {
+    //  console.log("on terminal update: ", text);
       terminal.write(text);
-    });
+    })
+    //TODO:Remove this later
+    // connectionRef.current.on("terminal:update", (text: string) => {
+    //   console.log("on terminal update: ", text);
+    //   terminal.write(text);
+    // });
     
-    connectionRef.current.emit("terminal:write", "\n");
+
+    emit(Configs.terminalEvents.terminalWrite,"\n");
+
+    //TODO:remove this later
+    //connectionRef.current.emit("terminal:write", "\n");
     
     return () => {
-      connectionRef.current?.off("terminal:update");
-      connectionRef.current?.disconnect();
+      removeEvent(Configs.terminalEvents.terminalUpdate);
+
+      //TODO:remove this later
+      //connectionRef.current?.off("terminal:update");
+      //connectionRef.current?.disconnect();
     };
-  }, [isMounted]);
+  }, [isConnected,isMounted,terminalRef.current]);
 
   useEffect(()=>{
 
@@ -77,13 +102,6 @@ const ShellTerminal: React.FC = () => {
 
   },[isMaximized]);
 
-  const handleClose = () => {
-    // Cleanup and handle close logic
-    if (connectionRef.current) {
-      connectionRef.current.disconnect();
-    }
-    // You might want to implement an onClose callback prop here
-  };
 
   return (
     <div className='w-full h-full'>

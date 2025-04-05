@@ -1,16 +1,21 @@
 import Browser from "@/components/applications/browser/browser";
 import { Calculator as CalculatorApp } from "@/components/applications/calculator/calculator";
-import CoderRoot from "@/components/applications/codeai/coder-root";
 import VSCodeUI from "@/components/applications/codeai/vscode";
-import ShellTerminal from "@/components/applications/shell/shell";
+import Explorer from "@/components/applications/explorer/explorer";
+//import ShellTerminal from "@/components/applications/shell/shell";
 import TaskManager from "@/components/applications/task-manager/task-manager";
-import { Calculator, ChartBarStacked, Code, Globe, LucideIcon, Shell } from "lucide-react";
-import { nanoid } from "nanoid";
+import useIsMounted from "@/hooks/useIsMounted";
+import { Calculator, ChartBarStacked, Code, FolderClosed, Globe, LucideIcon, Shell } from "lucide-react";
+import dynamic from "next/dynamic";
 import React,{ createContext, ReactNode, useContext, useState } from "react";
+
+const ShellTerminal = dynamic(()=>import("@/components/applications/shell/shell"),{
+  ssr:false
+});
 
 
 interface AppData{
-  component:React.FC<{}>,
+  component:React.FC<{}> | React.ComponentType<{}>,
   title:string,
   icon:LucideIcon
 }
@@ -40,6 +45,11 @@ export const apps:Record<string,AppData>={
     title:"Browser",
     component:Browser,
     icon:Globe
+  },
+  "explorer":{
+    title:"Explorer",
+    component:Explorer,
+    icon:FolderClosed,
   }
 }
 
@@ -93,6 +103,7 @@ export function WindowContextProvider({children}:{children:ReactNode}){
 
     const [windows,setWindows] = useState<IWindow[]>([]);
     const [topZIndex,setTopZIndex] = useState<number>(0);
+    const isMounted = useIsMounted();
 
     const addWindow = (id:keyof typeof apps) => {
       console.log("inside add window",id);
@@ -133,6 +144,7 @@ export function WindowContextProvider({children}:{children:ReactNode}){
        
       };
 
+      if(!isMounted) return null;
     return <windowContext.Provider
     value={{
         windows,

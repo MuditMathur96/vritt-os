@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import ShellTerminal from './applications/shell/shell';
-import CoderRoot from './applications/codeai/coder-root';
 import WindowManager from './window/window-manager';
 import { Calculator, ChartBarStacked, Code, Computer, File, Globe, LucideIcon, Shell } from 'lucide-react';
 import { useWindowContext } from '@/context/windows-context';

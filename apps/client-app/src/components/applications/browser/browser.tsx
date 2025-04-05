@@ -31,7 +31,7 @@ const Browser: React.FC = () => {
     setInputValue('https://www.google.com/webhp?igu=1');
   }, []);
 
-  const activeTab = tabs.find(tab => tab.id === activeTabId);
+ // const activeTab = tabs.find(tab => tab.id === activeTabId);
 
   const handleAddTab = () => {
     if (tabs.length < 5) {
@@ -200,9 +200,9 @@ const Browser: React.FC = () => {
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 bg-white p-4 overflow-auto">
+      <div className="flex-1 bg-white overflow-auto">
         {
-            tabs.map((tab,index)=>{
+            tabs.map((tab)=>{
                
                 return <TabElement key={tab.id} 
                 tab={tab} 
@@ -218,7 +218,7 @@ const Browser: React.FC = () => {
 
 function TabElement({tab,activeTabId}:{tab:Tab,activeTabId:string | null}){
 
-    const [error,setError] = useState<string | null >(null);
+ //   const [error,setError] = useState<string | null >(null);
 
     return (<div key={tab.id} className={`${activeTabId === tab.id?"":"hidden"} w-full h-full`}>
         {tab && tab.url ? (

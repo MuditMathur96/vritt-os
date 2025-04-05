@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import MonacoEditor, {useMonaco} from '@monaco-editor/react';
+import MonacoEditor from '@monaco-editor/react';
 
 import { Folder, File, ChevronRight, ChevronDown, X, Code, Settings, Search, Terminal } from 'lucide-react';
 
@@ -31,23 +31,42 @@ type TabType = {
   path?:string
 };
 
+const fileTypes:Record<string,string>={
+  "tsx":"typescript",
+  "jsx":"javscript",
+  "ts":"typescript",
+  "js":"javascript",
+  "html":"html",
+  "py":"python",
+  "go":'golang',
+  "json":"json"
+}
+
 function Editor({data,onChange,tabName}:{tabName:string,data:string,onChange:(data:string)=>void}){
    
     const editorRef = useRef<any>(null);
     const monacoRef = useRef<any>(null);
 
+    function getLanguageFromName(name:string){
+
+      const arr = name.split(".");
+      const ext = arr[arr.length-1];
+      console.log("language: ",fileTypes[ext]);
+      return fileTypes[ext] || "javascript";
+    }
+
     useEffect(()=>{
         if(monacoRef.current && editorRef.current){
             
-            
-            const model = monacoRef.current.editor.createModel( data,"javascript" );
+            console.log(tabName)
+            const model = monacoRef.current.editor.createModel( data,getLanguageFromName(tabName) );
+            console.log("model:",model);
             editorRef.current.setModel(model);
-
 
         }
 
 
-    },[,tabName]);
+    },[tabName,editorRef.current]);
 
     return ( <div 
     className='flex flex-col h-full'>

@@ -1,10 +1,9 @@
 "use client"
-import { useState, useRef, ReactNode } from "react";
+import { useRef, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { X, Minus, Maximize } from "lucide-react";
-import { nanoid } from "nanoid";
 import { useDraggable } from "@/hooks/useDraggable";
-import { Calculator } from "../applications/calculator/calculator";
+
 import { useWindowContext } from "@/context/windows-context";
 import AppRenderer from "../applications/renderer.tsx/app-renderer";
 
@@ -30,7 +29,7 @@ const Window = ({ children,id, title, onClose, onMinimize, onMaximize, bringToFr
       ref={windowRef}
       className={`bg-gray-800
         flex flex-col h-[40px]
-        overflow-hidden rounded shadow-lg  ${isMaximized ? "w-screen h-[calc(100%-50px)] top-0 left-0 fixed " : "max-w-[calc(100vw-10px)] absolute w-[400px] max-h-[600px] h-[600px]"}`}
+        overflow-hidden rounded shadow-lg  ${isMaximized ? "w-screen h-[calc(100%-48px)] top-0 left-0 fixed " : "max-w-[calc(100vw-10px)] absolute w-[400px] max-h-[600px] h-[600px]"}`}
       style={{ left: !isMaximized ? position.x : 0, top: !isMaximized ? position.y : 0, zIndex }}
       onMouseDown={() => bringToFront(id)}
     >  

@@ -9,14 +9,15 @@ export const useDraggable = (
   elementRef: RefObject<HTMLElement | null>,
   isMaximized: boolean
 ) => {
-  const [position, setPosition] = useState<Position>({ x: 100, y: 100 });
+  const [position, setPosition] = useState<Position>({ x: 100, y: 50 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const taskbarOffset = 48;
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (!isMaximized && (e.target as HTMLElement).closest('.cursor-move')) {
-        console.log("updating")
+       
         setIsDragging(true);
         setDragOffset({
           x: e.clientX - position.x,
@@ -33,7 +34,7 @@ export const useDraggable = (
         e.preventDefault();
 
         const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight - 50; // Leave 50px for the taskbar
+        const windowHeight = window.innerHeight - taskbarOffset; // Leave space for the taskbar
         const elementWidth = elementRef.current.offsetWidth;
         const elementHeight = elementRef.current.offsetHeight;
 

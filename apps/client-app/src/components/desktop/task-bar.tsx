@@ -3,6 +3,7 @@ import { Search, Settings, Power, User, FileText, Image, Mail, Calendar, Store, 
 import { motion } from 'framer-motion';
 import useTime from '@/hooks/useTime';
 import { apps, useWindowContext } from '@/context/windows-context';
+import { createPortal } from 'react-dom';
 
 const Taskbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -112,73 +113,80 @@ const Taskbar = () => {
       </div>
       
       {/* Start Menu */}
-      <div 
-        id="start-menu"
-        className={`fixed left-1/4 bottom-14 w-full max-w-lg bg-slate-800 text-white bg-opacity-95 backdrop-blur-xl rounded-lg shadow-xl p-4 pb-6 z-20
-          transform origin-bottom-left transition-all duration-300 ease-in-out
-          ${isOpen 
-            ? 'opacity-100 scale-100 translate-y-0 z-[999999]' 
-            : 'opacity-0 scale-95 translate-y-4 pointer-events-none'}`}
-      >
-        {/* Search bar */}
-        <div className="relative mb-4">
-          <input
-            type="text"
-            placeholder="Type to search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full p-2 pl-10 bg-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <Search size={18} className="absolute left-3 top-2.5 text-slate-500" />
-        </div>
-        
-        {/* Pinned section */}
-        <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-sm font-medium">Pinned</h3>
-            <button className="text-xs text-blue-500 flex items-center hover:underline">
-              All apps <ChevronRight size={14} />
-            </button>
-          </div>
-          
-          <div className="grid grid-cols-4 gap-4">
-            {Object.keys(apps).map(key => {
-              const Icon = apps[key].icon;
-
-             return (  <div
-              onClick={()=>{
-                addWindow(key);
-                setIsOpen(false);
-              }} 
-                key={key}
-                className="flex flex-col items-center justify-center p-2 rounded-md hover:bg-slate-300 cursor-pointer transition-colors"
-              >
-                <div className="bg-gradient-to-br from-blue-400 to-blue-600 p-1.5 rounded-md mb-1">
-                    <Icon />
-                </div>
-                <span className="text-xs text-center">{apps[key].title}</span>
-              </div>)
-            }
-            )}
-          </div>
-        </div>
-        
-     
-        
-        {/* User and power section */}
-        <div className="absolute bottom-2 left-0 w-full px-4 flex justify-between items-center">
-          {/* <div className="flex items-center cursor-pointer rounded-md p-1 hover:bg-slate-300">
-            <div className="bg-slate-400 rounded-full p-1 mr-2">
-              <User size={18} />
+      {
+        createPortal(  <div 
+          style={{
+            zIndex:"99999"
+          }}
+            id="start-menu"
+            className={`fixed left-1/4 bottom-14 w-full max-w-lg bg-slate-800 text-white bg-opacity-95 backdrop-blur-xl rounded-lg shadow-xl p-4 pb-6 
+              
+              transform origin-bottom-left transition-all duration-300 ease-in-out
+             z-[9999999] 
+             ${isOpen?"opacity-100 bottom-[55px]":"opacity-0 bottom-[-350px]"}
+           ` }
+          >
+            {/* Search bar */}
+            <div className="relative mb-4">
+              <input
+                type="text"
+                placeholder="Type to search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full p-2 pl-10 bg-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <Search size={18} className="absolute left-3 top-2.5 text-slate-500" />
             </div>
-            <span className="text-sm">User</span>
-          </div> */}
-          
-          <div className="flex items-center cursor-pointer rounded-md p-1 hover:bg-slate-300 ml-auto">
-            <Power size={18} className="text-slate-600" />
-          </div>
-        </div>
-      </div>
+            
+            {/* Pinned section */}
+            <div className="mb-4">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-sm font-medium">Pinned</h3>
+                <button className="text-xs text-blue-500 flex items-center hover:underline">
+                  All apps <ChevronRight size={14} />
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-4 gap-4">
+                {Object.keys(apps).map(key => {
+                  const Icon = apps[key].icon;
+    
+                 return (  <div
+                  onClick={()=>{
+                    addWindow(key);
+                    setIsOpen(false);
+                  }} 
+                    key={key}
+                    className="flex flex-col items-center justify-center p-2 rounded-md hover:bg-slate-300 cursor-pointer transition-colors"
+                  >
+                    <div className="bg-gradient-to-br from-blue-400 to-blue-600 p-1.5 rounded-md mb-1">
+                        <Icon />
+                    </div>
+                    <span className="text-xs text-center">{apps[key].title}</span>
+                  </div>)
+                }
+                )}
+              </div>
+            </div>
+            
+         
+            
+            {/* User and power section */}
+            <div className="absolute bottom-2 left-0 w-full px-4 flex justify-between items-center">
+              {/* <div className="flex items-center cursor-pointer rounded-md p-1 hover:bg-slate-300">
+                <div className="bg-slate-400 rounded-full p-1 mr-2">
+                  <User size={18} />
+                </div>
+                <span className="text-sm">User</span>
+              </div> */}
+              
+              <div className="flex items-center cursor-pointer rounded-md p-1 hover:bg-slate-300 ml-auto">
+                <Power size={18} className="text-slate-600" />
+              </div>
+            </div>
+          </div>,document.body)
+      }
+    
     </motion.div>
   );
 };
