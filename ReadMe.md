@@ -48,7 +48,7 @@ Vritt-OS is built with a modern, robust tech stack:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/vritt-os.git
+git clone https://github.com/MuditMathur96/vritt-os.git
 
 # Navigate to the project directory
 cd vritt-os
@@ -64,7 +64,7 @@ pnpm dev
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/vritt-os.git
+git clone https://github.com/MuditMathur96/vritt-os.git
 
 # Navigate to the project directory
 cd vritt-os
