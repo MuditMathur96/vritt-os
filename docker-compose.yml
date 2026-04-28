@@ -19,6 +19,6 @@ services:
     container_name: frontend
     restart: always
     ports:
-      - "3000:80"
+      - "5500:3000"
     depends_on:
       - backend
