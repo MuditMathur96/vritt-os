@@ -13,6 +13,12 @@ COPY pnpm-lock.yaml ./
 COPY apps/client-app/ apps/client-app/
 COPY packages/tsconfig/package.json packages/tsconfig/
 
+
+#Environment variables for build time
+ENV NEXT_PUBLIC_OSWebServerURL="https://os.api.muditmathur.in"
+ENV NODE_ENV=production
+ENV PORT=3000
+
 # Install dependencies
 RUN pnpm install --frozen-lockfile --filter @vritt-os/client-app
 

@@ -2,7 +2,7 @@
 
 A web-based operating system with a modern interface and powerful developer tools.
 
-Check this here: https://vritt-client-837515568960.asia-south1.run.app
+Check this here: https://os.muditmathur.in/
 
 ## Overview
 
