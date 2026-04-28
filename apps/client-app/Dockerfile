@@ -15,7 +15,9 @@ COPY packages/tsconfig/package.json packages/tsconfig/
 
 
 #Environment variables for build time
-ENV NEXT_PUBLIC_OSWebServerURL="https://os.api.muditmathur.in"
+# 👇 ADD THIS
+ARG NEXT_PUBLIC_OSWebServerURL
+ENV NEXT_PUBLIC_OSWebServerURL=$NEXT_PUBLIC_OSWebServerURL
 ENV NODE_ENV=production
 ENV PORT=3000
 
@@ -30,7 +32,7 @@ RUN pnpm --filter @vritt-os/client-app build
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-ENV NEXT_PUBLIC_OSWebServerURL="https://vritt-web-837515568960.asia-south1.run.app/"
+
 ENV NODE_ENV=production
 ENV PORT=3000
 

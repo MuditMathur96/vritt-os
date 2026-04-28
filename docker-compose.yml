@@ -17,12 +17,10 @@ services:
       context: .
       dockerfile: apps/client-app/Dockerfile
       args:
-        - NEXT_PUBLIC_OSWebServerURL=https://os.api.muditmathur.in
+        - NEXT_PUBLIC_OSWebServerURL:"https://os.api.muditmathur.in"
     container_name: frontend
     restart: always
     ports:
       - "5500:3000"
     depends_on:
       - backend
-    environment:
-      - NEXT_PUBLIC_OSWebServerURL=https://os.api.muditmathur.in
