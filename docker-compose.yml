@@ -16,6 +16,8 @@ services:
     build:
       context: .
       dockerfile: apps/client-app/Dockerfile
+      args:
+        - NEXT_PUBLIC_OSWebServerURL=https://os.api.muditmathur.in
     container_name: frontend
     restart: always
     ports:
